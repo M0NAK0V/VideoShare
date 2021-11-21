@@ -13,6 +13,10 @@ class CreateVideo(LoginRequiredMixin, CreateView):
 	fields = ['title', 'description', 'video_file', 'thumbnail']
 	template_name = 'videos/create_video.html'
 
+	def form_valid(self, form):
+		form.instance.uploader = self.request.user
+		return super().form_valid(form)
+
 	def get_success_url(self):
 		return reverse('video-detail', kwargs={'pk': self.object.pk})
 
@@ -20,7 +24,7 @@ class DetailVideo(DetailView):
 	model = Video
 	template_name = 'videos/detail_video.html'
 
-class UpdateVideo(LoginRequiredMixin, UpdateView):
+class UpdateVideo(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 	model = Video
 	fields = ['title', 'description']
 	template_name = 'videos/create_video.html'
@@ -28,9 +32,17 @@ class UpdateVideo(LoginRequiredMixin, UpdateView):
 	def get_success_url(self):
 		return reverse('video-detail', kwargs={'pk': self.object.pk})
 
-class DeleteVideo(LoginRequiredMixin, DeleteView):
+	def test_func(self):
+		video = self.get_object()
+		return self.request.user == video.uploader
+
+class DeleteVideo(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 	model = Video
 	template_name = 'videos/delete_video.html'
 
 	def get_success_url(self):
 		return reverse('index')
+
+	def test_func(self):
+		video = self.get_object()
+		return self.request.user == video.uploader
