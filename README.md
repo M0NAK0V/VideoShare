@@ -1,4 +1,4 @@
-# RSCHIR_Course_VideoHosting
+# RSCHIR_Course_VideoShare
 
 <h1 align ="center">Серверная часть веб-приложения "Видеохостинг"</h1>
 
